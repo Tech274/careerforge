@@ -65,3 +65,6 @@ verify_jwt = false
 
 [functions.job-search]
 verify_jwt = false
+
+[functions.career-analytics]
+verify_jwt = false
