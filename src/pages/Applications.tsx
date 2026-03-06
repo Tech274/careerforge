@@ -54,7 +54,13 @@ function FollowUpBadge({ date }: { date: string | null }) {
 
 export default function Applications() {
   const { resumeData } = useResume();
-  const [applications, setApplications] = useState<Application[]>([]);
+  const [applications, setApplications] = useState<Application[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("career_forge_applications") || "[]");
+    } catch {
+      return [];
+    }
+  });
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState<string>("all");
   const [search, setSearch] = useState("");
@@ -78,21 +84,31 @@ export default function Applications() {
       follow_up_date: form.follow_up_date || null,
       expected_salary: form.expected_salary, offered_salary: "", salary_data: null,
     };
-    setApplications(prev => [app, ...prev]);
+    setApplications(prev => {
+      const updated = [app, ...prev];
+      localStorage.setItem("career_forge_applications", JSON.stringify(updated));
+      return updated;
+    });
     setForm({ job_title: "", company: "", location: "", apply_link: "", notes: "", follow_up_date: "", expected_salary: "" });
     setShowForm(false);
     toast.success("Application tracked!");
   };
 
   const updateStatus = (id: string, status: Application["status"]) => {
-    setApplications(prev =>
-      prev.map(a => a.id === id ? { ...a, status, applied_at: status === "applied" ? new Date().toISOString() : a.applied_at } : a)
-    );
+    setApplications(prev => {
+      const updated = prev.map(a => a.id === id ? { ...a, status, applied_at: status === "applied" ? new Date().toISOString() : a.applied_at } : a);
+      localStorage.setItem("career_forge_applications", JSON.stringify(updated));
+      return updated;
+    });
     toast.success(`Status updated to ${statusLabels[status]}`);
   };
 
   const removeApplication = (id: string) => {
-    setApplications(prev => prev.filter(a => a.id !== id));
+    setApplications(prev => {
+      const updated = prev.filter(a => a.id !== id);
+      localStorage.setItem("career_forge_applications", JSON.stringify(updated));
+      return updated;
+    });
     toast.success("Application removed");
   };
 
@@ -115,7 +131,11 @@ export default function Applications() {
   };
 
   const updateOfferedSalary = (id: string, val: string) => {
-    setApplications(prev => prev.map(a => a.id === id ? { ...a, offered_salary: val } : a));
+    setApplications(prev => {
+      const updated = prev.map(a => a.id === id ? { ...a, offered_salary: val } : a);
+      localStorage.setItem("career_forge_applications", JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const filtered = applications.filter(a => {
