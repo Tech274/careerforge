@@ -7,6 +7,7 @@ import { ThemeProvider } from "next-themes";
 import { ResumeProvider } from "@/contexts/ResumeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AdminRoute } from "@/components/AdminRoute";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
@@ -38,6 +39,13 @@ import JobMatchScore from "./pages/JobMatchScore";
 import QRBusinessCard from "./pages/QRBusinessCard";
 import InterviewJournal from "./pages/InterviewJournal";
 import ResumeTranslate from "./pages/ResumeTranslate";
+// Admin Pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import UserManagement from "./pages/admin/UserManagement";
+import FinancialDashboard from "./pages/admin/FinancialDashboard";
+import TrafficAnalytics from "./pages/admin/TrafficAnalytics";
+import LeadsManagement from "./pages/admin/LeadsManagement";
+import MarketingInsights from "./pages/admin/MarketingInsights";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +97,14 @@ const App = () => (
               <Route path="/qr-card" element={<ProtectedRoute><QRBusinessCard /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+
+              {/* Admin Routes — role-guarded */}
+              <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+              <Route path="/admin/users" element={<AdminRoute><UserManagement /></AdminRoute>} />
+              <Route path="/admin/financial" element={<AdminRoute><FinancialDashboard /></AdminRoute>} />
+              <Route path="/admin/traffic" element={<AdminRoute><TrafficAnalytics /></AdminRoute>} />
+              <Route path="/admin/leads" element={<AdminRoute><LeadsManagement /></AdminRoute>} />
+              <Route path="/admin/marketing" element={<AdminRoute><MarketingInsights /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
