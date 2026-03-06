@@ -11,6 +11,13 @@ serve(async (req) => {
 
   try {
     const { resumeData, jobTitle, company, hiringManager, jobDescription, tone = "professional" } = await req.json();
+    
+    if (!jobTitle?.trim() || !company?.trim()) {
+      return new Response(JSON.stringify({ error: "Job title and company are required" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -29,7 +36,7 @@ serve(async (req) => {
       method: "POST",
       headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-flash-1.5",
         messages: [
           {
             role: "system",
