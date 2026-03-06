@@ -34,8 +34,9 @@ jobs:
       - name: Build
         env:
           GITHUB_ACTIONS: "true"
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: "https://qlmsjamqofzsfttgljwr.supabase.co"
+          VITE_SUPABASE_PUBLISHABLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsbXNqYW1xb2Z6c2Z0dGdsandyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTE4MDgsImV4cCI6MjA4ODIyNzgwOH0.RWimAVpaViSSPvdArIshgfrGmpc-CjBpFmTUlSNX5ok"
+          VITE_SUPABASE_PROJECT_ID: "qlmsjamqofzsfttgljwr"
         run: npm run build
 
       - name: Setup Pages
