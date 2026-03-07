@@ -35,7 +35,7 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           supabase functions deploy \
-            --project-ref qlmsjamqofzsfttgljwr \
+            --project-ref yewbzvyrzudhwhlarzlm \
             --no-verify-jwt
 
   build:
@@ -57,9 +57,9 @@ jobs:
       - name: Build
         env:
           GITHUB_ACTIONS: "true"
-          VITE_SUPABASE_URL: "https://qlmsjamqofzsfttgljwr.supabase.co"
-          VITE_SUPABASE_PUBLISHABLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsbXNqYW1xb2Z6c2Z0dGdsandyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTE4MDgsImV4cCI6MjA4ODIyNzgwOH0.RWimAVpaViSSPvdArIshgfrGmpc-CjBpFmTUlSNX5ok"
-          VITE_SUPABASE_PROJECT_ID: "qlmsjamqofzsfttgljwr"
+          VITE_SUPABASE_URL: "https://yewbzvyrzudhwhlarzlm.supabase.co"
+          VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_s7896Isgha0xarNkjL6rKQ_sllejfrk"
+          VITE_SUPABASE_PROJECT_ID: "yewbzvyrzudhwhlarzlm"
         run: npm run build
 
       - name: Setup Pages

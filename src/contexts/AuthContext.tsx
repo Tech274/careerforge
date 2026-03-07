@@ -17,6 +17,7 @@ interface AuthContextType {
   loading: boolean;
   plan: PlanKey;
   subscriptionEnd: string | null;
+  isAdmin: boolean;
   signUp: (email: string, password: string, name: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -31,6 +32,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [plan, setPlan] = useState<PlanKey>("free");
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const fetchIsAdmin = async (userId: string) => {
+    try {
+      const { data } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", userId)
+        .single();
+      setIsAdmin(data?.is_admin === true);
+    } catch {
+      setIsAdmin(false);
+    }
+  };
 
   const refreshSubscription = async () => {
     try {
@@ -56,10 +71,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       setLoading(false);
       if (session?.user) {
-        setTimeout(() => refreshSubscription(), 0);
+        setTimeout(() => {
+          refreshSubscription();
+          fetchIsAdmin(session.user.id);
+        }, 0);
       } else {
         setPlan("free");
         setSubscriptionEnd(null);
+        setIsAdmin(false);
       }
     });
 
@@ -67,7 +86,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-      if (session?.user) refreshSubscription();
+      if (session?.user) {
+        refreshSubscription();
+        fetchIsAdmin(session.user.id);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -94,10 +116,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut();
     setPlan("free");
     setSubscriptionEnd(null);
+    setIsAdmin(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, plan, subscriptionEnd, signUp, signIn, signOut, refreshSubscription }}>
+    <AuthContext.Provider value={{ user, session, loading, plan, subscriptionEnd, isAdmin, signUp, signIn, signOut, refreshSubscription }}>
       {children}
     </AuthContext.Provider>
   );

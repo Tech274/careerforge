@@ -19,6 +19,13 @@ serve(async (req) => {
 
   try {
     const { text, mode } = await req.json();
+    
+    if (!text?.trim()) {
+      return new Response(JSON.stringify({ error: "Text is required" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -31,7 +38,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-flash-1.5",
         messages: [
           {
             role: "system",

@@ -1,4 +1,4 @@
-project_id = "qlmsjamqofzsfttgljwr"
+project_id = "yewbzvyrzudhwhlarzlm"
 
 [functions.linkedin-optimize]
 verify_jwt = false
@@ -67,4 +67,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.career-analytics]
+verify_jwt = false
+
+[functions.admin-dashboard]
 verify_jwt = false

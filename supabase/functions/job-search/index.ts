@@ -144,7 +144,7 @@ Generate exactly ${pageSize} diverse, realistic listings distributed across: ${r
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-flash-1.5",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user",   content: userPrompt },
