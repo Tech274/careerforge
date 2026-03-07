@@ -47,7 +47,8 @@ function groupByMonth(items: { created_at?: string }[]) {
 }
 
 // Fetch ALL pages of Stripe subscriptions
-async function getAllStripeSubscriptions(stripe: Stripe, status: "active" | "canceled", createdGte?: number) {
+async function getAllStripeSubscriptions(stripe: Stripe | null, status: "active" | "canceled", createdGte?: number) {
+  if (!stripe) return [];
   const all: Stripe.Subscription[] = [];
   const params: Stripe.SubscriptionListParams = { status, limit: 100, expand: ["data.items.data.price"] };
   if (createdGte) params.created = { gte: createdGte };
@@ -61,7 +62,8 @@ async function getAllStripeSubscriptions(stripe: Stripe, status: "active" | "can
 }
 
 // Build a Map<email, {plan, subscription_end}> from Stripe
-async function buildStripePlanMap(stripe: Stripe): Promise<Map<string, { plan: string; subscription_end: string | null }>> {
+async function buildStripePlanMap(stripe: Stripe | null): Promise<Map<string, { plan: string; subscription_end: string | null }>> {
+  if (!stripe) return new Map();
   const map = new Map<string, { plan: string; subscription_end: string | null }>();
   const subs = await getAllStripeSubscriptions(stripe, "active");
   for (const sub of subs) {
@@ -90,7 +92,7 @@ async function buildStripePlanMap(stripe: Stripe): Promise<Map<string, { plan: s
 
 async function handleOverview(
   admin: ReturnType<typeof createClient>,
-  stripe: Stripe,
+  stripe: Stripe | null,
   fromDate: Date,
   toDate: Date
 ) {
@@ -194,7 +196,7 @@ async function handleOverview(
 
 async function handleUsers(
   admin: ReturnType<typeof createClient>,
-  stripe: Stripe,
+  stripe: Stripe | null,
   page: number,
   perPage: number,
   search: string | undefined,
@@ -266,7 +268,7 @@ async function handleUsers(
 
 async function handleFinancial(
   admin: ReturnType<typeof createClient>,
-  stripe: Stripe,
+  stripe: Stripe | null,
   fromDate: Date,
   _toDate: Date
 ) {
@@ -434,7 +436,7 @@ async function handleTraffic(
 
 async function handleLeads(
   admin: ReturnType<typeof createClient>,
-  stripe: Stripe,
+  stripe: Stripe | null,
   fromDate: Date,
   _toDate: Date
 ) {
@@ -602,10 +604,13 @@ serve(async (req) => {
     const fromDate = from ? new Date(from) : new Date(Date.now() - 30 * 86_400_000);
     const toDate   = to   ? new Date(to)   : new Date();
 
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "", {
-      // @ts-ignore
-      apiVersion: "2025-08-27.basil",
-    });
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY") ?? "";
+    const stripe = stripeKey
+      ? new Stripe(stripeKey, {
+          // @ts-ignore
+          apiVersion: "2025-08-27.basil",
+        })
+      : null;
 
     switch (section) {
       case "overview":
